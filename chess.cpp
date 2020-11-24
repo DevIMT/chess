@@ -162,27 +162,18 @@ void Board::print()
 {
     std::ofstream outfile("board.txt");    
     // First line
-    outfile << "        --BLACK--         \n";
-    outfile << " _________________________\n"; // 18
+    outfile << std::setw(22) << "--BLACK--" << std::setw(22);
+    outfile << "\n ________________________________\n"; // 18
     int y_coord = 0;
     int x_coord = 0;
-    Piece p;
     for (int y = 0; y < 8; ++y){
         x_coord = 0;
         for (int x = 0; x < 18; ++x){
-            p = board[y_coord][x_coord];
             if (x == 0)
                 outfile << 8-(y);
             else {
                 if (x % 2 == 0){
-                    if (p.get_type() == 'W'){
-                        outfile << "\e[1m" << p.get_name() << std::setw(2);
-                        x_coord++;
-                    } else {
-                        outfile << "\e[0m" << p.get_name() << std::setw(2);
-                        x_coord++;
-                    }
-
+                    outfile << board[y_coord][x_coord++].get_name() << std::setw(2);
                 } else {
                     outfile << "|" << std::setw(2);
                 }
@@ -192,16 +183,16 @@ void Board::print()
         outfile << "\n";
     }
     
-    // outfile << " ";
-    // char letter = 'A';
-    // for (int i = 1; i < 17; ++i){
-    //     if (i % 2 == 0){
-    //         outfile << letter++ << std::setw(2);
-    //     } else {
-    //         outfile << "|" << std::setw(2);
-    //     }
-    // }
-    outfile << "        --WHITE--         \n";
+    outfile << " ";
+    char letter = 'A';
+    for (int i = 1; i < 18; ++i){
+        if (i % 2 == 0){
+            outfile << letter++ << std::setw(2);
+        } else {
+            outfile << "|" << std::setw(2);
+        }
+    }
+    outfile << "\n" << std::setw(22) << "--WHITE--" << std::setw(22);
 
     outfile.close();
 }
