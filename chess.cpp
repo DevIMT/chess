@@ -4,32 +4,34 @@
 #include <iomanip>
 #include "chess.h"
 
-Piece::Piece(std::string coord)
+using namespace std;
+
+Piece::Piece(pair<char,int> coord)
 {
     loc = coord;
 }
 
-Piece::Piece(std::string n, char t, std::string coord)
+Piece::Piece(string n, char t, pair<char,int> coord)
 {
     name = n;
     type = t;
     loc = coord;
 }
 
-// Return string coordinates of piece (e.g. A4)
-std::string Piece::location()
+// Return a std::pair coordinates of piece (e.g. ('A',4))
+pair<char,int> Piece::location()
 {
     return loc;
 }
 
 // Return name of the piece
-std::string Piece::get_name()
+string Piece::get_name()
 {
     return name;
 }
 
 // Set the piece's unicode symbol
-void Piece::setsymbol(std::string symb)
+void Piece::setsymbol(string symb)
 {
     symbol = symb;
 }
@@ -41,13 +43,13 @@ char Piece::get_type()
 }
 
 // Returns the piece's unicode symbol
-std::string Piece::get_symbol()
+string Piece::get_symbol()
 {
     return symbol;
 }
 
 // Changes the piece's name to n
-void Piece::setname(std::string n)
+void Piece::setname(string n)
 {
     name = n;
 }
@@ -61,7 +63,7 @@ void Piece::settype(char t)
 // Add's pieces to the 8x8 board
 void Board::build()
 {
-    board = std::vector<std::vector<Piece>> (8, std::vector<Piece> (8));
+    board = vector<vector<Piece>> (8, vector<Piece> (8));
 
     // Build the board
     for (int y = 0; y < 8; ++y){
@@ -143,7 +145,7 @@ void Board::set(Player &White, Player &Black)
 // Prints the coordinates of the board elements
 void Board::printCoords()
 {
-    std::ofstream outfile("board.txt");    
+    ofstream outfile("board.txt");    
     // First line
     outfile << "       --BLACK--         \n";
     outfile << " _________________________\n"; // 18
@@ -156,7 +158,9 @@ void Board::printCoords()
                 outfile << 8-(y);
             else {
                 if (x % 2 == 0){
-                    outfile << board[y_coord][x_coord++].location();
+                    outfile << "(" << board[y_coord][x_coord].location().first << ", "
+                            << board[y_coord][x_coord].location().second << ")";
+                    x_coord++;
                 } else {
                     outfile << "|";
                 }
@@ -172,12 +176,43 @@ void Board::printCoords()
     outfile.close();
 }
 
+void Board::printCoords(ofstream &outfile)
+{   
+    // First line
+    outfile << "\n\n       --BLACK--         \n";
+    outfile << " _________________________\n"; // 18
+    int y_coord = 0;
+    int x_coord = 0;
+    for (int y = 0; y < 8; ++y){
+        x_coord = 0;
+        for (int x = 0; x < 18; ++x){
+            if (x == 0)
+                outfile << 8-(y);
+            else {
+                if (x % 2 == 0){
+                    outfile << "(" << board[y_coord][x_coord].location().first << ", "
+                            << board[y_coord][x_coord].location().second << ")";
+                    x_coord++;
+                } else {
+                    outfile << "|";
+                }
+            }
+        }
+        y_coord++;
+        outfile << "\n";
+    }
+    
+    outfile << " |A |B |C |D |E |F |G |H |\n";
+    outfile << "       --WHITE--         \n";
+
+}
+
 // Prints the board with pieces
 void Board::print()
 {
-    std::ofstream outfile("board.txt");    
+    ofstream outfile("board.txt");    
     // First line
-    outfile << std::setw(31) << "--BLACK--";
+    outfile << setw(31) << "--BLACK--";
     outfile << "\n _____________________________________________________\n"; // 18
     int y_coord = 0;
     int x_coord = 0;
@@ -204,11 +239,12 @@ void Board::print()
         if (i % 2 == 0){
             outfile << letter++;
         } else {
-            outfile << std::setw(7);
+            outfile << setw(7);
         }
     }
-    outfile << "\n" << std::setw(31) << "--WHITE--";
+    outfile << "\n" << setw(31) << "--WHITE--";
 
+    printCoords(outfile); 
     outfile.close();
 }
 
@@ -222,7 +258,7 @@ void Player::add_piece(Piece p)
     pieces.push_back(p);
 }
 
-std::vector<Piece> Player::pieces_list()
+vector<Piece> Player::pieces_list()
 {
     return pieces;
 }

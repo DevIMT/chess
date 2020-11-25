@@ -1,25 +1,28 @@
 #include <iostream>
 #include <vector>
+#include <utility>
+
+using namespace std;
 
 // TODO: Create a Piece class. Fill Board with Pieces (Null, White, Black)
 class Piece {
     public:
         Piece() = default;
-        Piece(std::string coord);
-        Piece(std::string name, char type,std::string coord);
-        std::vector<std::string> moves(); // TODO
-        void setname(std::string name); // TODO
+        Piece(pair<char,int> coord);
+        Piece(string name, char type,pair<char,int> coord);
+        vector<string> moves(); // TODO
+        void setname(string name); // TODO
         void settype(char type); // TODO
-        void setsymbol(std::string symb);
-        std::string get_name();
+        void setsymbol(string symb);
+        string get_name();
         char get_type();
-        std::string get_symbol();
-        std::string location();
+        string get_symbol();
+        pair<char,int> location();
     private:
-        std::string name = "Null";
-        std::string symbol = " \u26C9 ";
+        string name = "Null";
+        string symbol = " \u26C9 ";
         char type = 'N';
-        std::string loc;
+        pair<char,int> loc = make_pair('A',1);
 };
 
 class Player {
@@ -28,10 +31,10 @@ class Player {
         Player(char s);
         void add_piece(Piece p);
         void move_piece(Piece p);
-        std::vector<Piece> pieces_list();
+        vector<Piece> pieces_list();
     private:
         char side = 'W';
-        std::vector<Piece> pieces;
+        vector<Piece> pieces;
 
 };
 
@@ -41,16 +44,17 @@ class Board {
         void build();
         void set(Player &White, Player &Black); 
         void printCoords();
+        void printCoords(ofstream &outfile);
         void print();
     private:
-        std::vector<std::vector<Piece>> board;
-        const std::vector<std::vector<std::string>> coordinates{
-         {"A8","B8","C8","D8","E8","F8","G8","H8"},
-         {"A7","B7","C7","D7","E7","F7","G7","H7"},
-         {"A6","B6","C6","D6","E6","F6","G6","H6"},
-         {"A5","B5","C5","D5","E5","F5","G5","H5"},
-         {"A4","B4","C4","D4","E4","F4","G4","H4"},
-         {"A3","B3","C3","D3","E3","F3","G3","H3"},
-         {"A2","B2","C2","D2","E2","F2","G2","H2"},
-         {"A1","B1","C1","D1","E1","F1","G1","H1"}};
+        vector<vector<Piece>> board;
+        vector<vector<pair<char,int>>> coordinates{
+         {make_pair('A',8),make_pair('B',8),make_pair('C',8),make_pair('D',8),make_pair('E',8),make_pair('F',8),make_pair('G',8),make_pair('H',8)},
+         {make_pair('A',7),make_pair('B',7),make_pair('C',7),make_pair('D',7),make_pair('E',7),make_pair('F',7),make_pair('G',7),make_pair('H',7)},
+         {make_pair('A',6),make_pair('B',6),make_pair('C',6),make_pair('D',6),make_pair('E',6),make_pair('F',6),make_pair('G',6),make_pair('H',6)},
+         {make_pair('A',5),make_pair('B',5),make_pair('C',5),make_pair('D',5),make_pair('E',5),make_pair('F',5),make_pair('G',5),make_pair('H',5)},
+         {make_pair('A',4),make_pair('B',4),make_pair('C',4),make_pair('D',4),make_pair('E',4),make_pair('F',4),make_pair('G',4),make_pair('H',4)},
+         {make_pair('A',3),make_pair('B',3),make_pair('C',3),make_pair('D',3),make_pair('E',3),make_pair('F',3),make_pair('G',3),make_pair('H',3)},
+         {make_pair('A',2),make_pair('B',2),make_pair('C',2),make_pair('D',2),make_pair('E',2),make_pair('F',2),make_pair('G',2),make_pair('H',2)},
+         {make_pair('A',1),make_pair('B',1),make_pair('C',1),make_pair('D',1),make_pair('E',1),make_pair('F',1),make_pair('G',1),make_pair('H',1)}};
 };
