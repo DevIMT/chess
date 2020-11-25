@@ -60,6 +60,7 @@ void Piece::settype(char t)
     type = t;
 }
 
+// TODO: Get this working for Pawn, then try moving it
 vector<pair<char,int>> Piece::moves(Board field)
 {
     vector<pair<char,int>> possible_moves;
