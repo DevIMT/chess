@@ -13,10 +13,11 @@ class Piece {
         void setsymbol(std::string symb);
         char get_name();
         char get_type();
+        std::string get_symbol();
         std::string location();
     private:
-        char name;
-        std::string symbol;
+        char name = ' ';
+        std::string symbol = " \u26C9 ";
         char type = 'N';
         std::string loc;
 };
