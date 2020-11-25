@@ -1,4 +1,5 @@
 #include "chess.h"
+#include <string>
 
 int main()
 {
@@ -11,17 +12,31 @@ int main()
     // grid.printCoords();
 
     grid.print();
+    bool valid = false;
+    string selected_piece;
 
-    std::cout << "White's Pieces: " ;
-    for (auto e : White.pieces_list()){
-        std::cout << e.get_symbol() << ", ";
+    std::cout << "White to move \n";
+    while (!valid){
+        std::cout << "Select a piece (e.g. E2): ";
+        std::cin >> selected_piece;
+
+        for (auto &e: selected_piece){
+            e = std::toupper(e);
+        }
+
+
+        if (selected_piece[0] >= 'A' && selected_piece[0] <= 'H' && 
+            selected_piece[1] >= '1' && selected_piece[1] <= '8'){
+                std::cout << "Selecting piece at " << selected_piece << ".\n";
+                valid = true;
+        } else {
+            std::cerr << "Invalid coordinate.\n\n";
+        }
     }
-    std::cout << "\nBlack's Pieces: ";
-    for (auto e : Black.pieces_list()){
-        std::cout << e.get_symbol() << ", ";
-    }
-    std::cout << "\n";
-    // Set the board (with pawns)
+
+    pair<char,int> coord = make_pair(selected_piece[0],int(selected_piece[1]-48));
+    std::cout << coord.first << " " << coord.second << "\n";
+    
 
     // Program the pieces
         // Move by coordinates. 

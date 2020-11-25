@@ -9,7 +9,7 @@ class Piece {
         Piece() = default;
         Piece(pair<char,int> coord);
         Piece(string name, char type,pair<char,int> coord);
-        vector<pair<char,int>> moves(Board field); // TODO
+        // vector<pair<char,int>> moves(pair<char,int>); // TODO
         void setname(string name);
         void settype(char type);
         void setsymbol(string symb);
@@ -29,12 +29,11 @@ class Player {
     public:
         Player() = default;
         Player(char s);
-        void add_piece(Piece p);
-        void move_piece(Piece p);
-        vector<Piece> pieces_list();
+        void capture_piece(Piece p);
+        vector<Piece> list_pieces();
     private:
         char side = 'W';
-        vector<Piece> pieces;
+        vector<Piece> captured_pieces;
 
 };
 
@@ -43,6 +42,8 @@ class Board {
         Board() = default;
         void build();
         void set(Player &White, Player &Black); 
+        void move(pair<char,int> coord);
+        pair<int,int> find_yx(pair<char,int> coord);
         void printCoords();
         void printCoords(ofstream &outfile);
         void print();

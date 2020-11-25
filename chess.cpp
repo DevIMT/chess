@@ -61,32 +61,27 @@ void Piece::settype(char t)
 }
 
 // TODO: Get this working for Pawn, then try moving it
-vector<pair<char,int>> Piece::moves(Board field)
-{
-    vector<pair<char,int>> possible_moves;
-
-    // List all moves, then check for valid moves
-     if (name == "Pawn"){
-        possible_moves.push_back(make_pair(loc.first,loc.second + 1));
-        // TODO: Add moves which are dependent on if enemy pieces are in vacinity 
-        if (movecount == 0)
-            possible_moves.push_back(make_pair(loc.first,loc.second + 2));
-     } else if (name == "King"){
-        possible_moves = 
-            {make_pair(loc.first - 1,loc.second),
-            make_pair(loc.first - 1,loc.second+1),
-            make_pair(loc.first - 1,loc.second-1),
-            make_pair(loc.first,loc.second+1),
-            make_pair(loc.first,loc.second-1),
-            make_pair(loc.first + 1,loc.second),
-            make_pair(loc.first + 1,loc.second + 1),
-            make_pair(loc.first + 1,loc.second - 1)};
-        
-
-
-
-    }
-} 
+// vector<pair<char,int>> Piece::moves()
+// {
+//     vector<pair<char,int>> possible_moves;
+//     // List all moves, then check for valid moves
+//      if (name == "Pawn"){
+//         possible_moves.push_back(make_pair(loc.first,loc.second + 1));
+//         // TODO: Add moves which are dependent on if enemy pieces are in vacinity 
+//         if (movecount == 0)
+//             possible_moves.push_back(make_pair(loc.first,loc.second + 2));
+//      } else if (name == "King"){
+//         possible_moves = 
+//             {make_pair(loc.first - 1,loc.second),
+//             make_pair(loc.first - 1,loc.second+1),
+//             make_pair(loc.first - 1,loc.second-1),
+//             make_pair(loc.first,loc.second+1),
+//             make_pair(loc.first,loc.second-1),
+//             make_pair(loc.first + 1,loc.second),
+//             make_pair(loc.first + 1,loc.second + 1),
+//             make_pair(loc.first + 1,loc.second - 1)};
+//     }
+// } 
 
 // Add's pieces to the 8x8 board
 void Board::build()
@@ -132,7 +127,6 @@ void Board::set(Player &White, Player &Black)
                     board[y][x].setsymbol(" \u2659 ");
                     board[y][x].setname("Pawn");
                 }
-                Black.add_piece(board[y][x]);
             } 
             // White Pieces
             else if (y >= 6) {
@@ -159,7 +153,6 @@ void Board::set(Player &White, Player &Black)
                     board[y][x].setsymbol(u8" \u265F ");
                     board[y][x].setname("Pawn");
                 }
-                White.add_piece(board[y][x]);
             } else {
                 board[y][x].settype('N');
                 board[y][x].setname("Null");
@@ -285,6 +278,33 @@ void Board::print()
     outfile.close();
 }
 
+pair<int,int> Board::find_yx(pair<char,int> coord)
+{
+    // Convert coord into x,y coordinates to find on 2d vector 'board'
+    int x;
+    int y;
+    if (coord.first == 'A'){x=0;}
+    else if (coord.first == 'B'){x=1;}
+    else if (coord.first == 'C'){x=2;}
+    else if (coord.first == 'D'){x=3;}
+    else if (coord.first == 'E'){x=4;}
+    else if (coord.first == 'F'){x=5;}
+    else if (coord.first == 'G'){x=6;}
+    else if (coord.first == 'H'){x=7;}
+    else {std::cerr << "Error converting x coordinate\n";}
+
+    if (coord.second == 8){y=0;}
+    else if (coord.second == 7){y=1;}
+    else if (coord.second == 6){y=2;}
+    else if (coord.second == 5){y=3;}
+    else if (coord.second == 4){y=4;}
+    else if (coord.second == 3){y=5;}
+    else if (coord.second == 2){y=6;}
+    else if (coord.second == 1){y=7;}
+    else {std::cerr << "Error converting y coordinate\n";}
+
+    return make_pair(y,x);
+}
 
 Player::Player(char s)
 {
@@ -292,15 +312,15 @@ Player::Player(char s)
 }
 
 // Inserts chess pieces into player's pieces_list
-void Player::add_piece(Piece p)
+void Player::capture_piece(Piece p)
 {
-    pieces.push_back(p);
+    captured_pieces.push_back(p);
 }
 
 // Returns a vector of the player's pieces
-vector<Piece> Player::pieces_list()
+vector<Piece> Player::list_pieces()
 {
-    return pieces;
+    return captured_pieces;
 }
 
 
