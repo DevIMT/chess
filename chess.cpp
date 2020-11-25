@@ -176,11 +176,12 @@ void Board::printCoords()
     outfile.close();
 }
 
+// Prints coordinates within another print function (allows for side-by-side view)
 void Board::printCoords(ofstream &outfile)
 {   
     // First line
-    outfile << "\n\n       --BLACK--         \n";
-    outfile << " _________________________\n"; // 18
+    outfile << "\n\n" << setw(31) << "--BLACK--";
+    outfile << "\n _____________________________________________________\n"; // 18
     int y_coord = 0;
     int x_coord = 0;
     for (int y = 0; y < 8; ++y){
@@ -190,11 +191,11 @@ void Board::printCoords(ofstream &outfile)
                 outfile << 8-(y);
             else {
                 if (x % 2 == 0){
-                    outfile << "(" << board[y_coord][x_coord].location().first << ", "
+                    outfile << "(" << board[y_coord][x_coord].location().first << ","
                             << board[y_coord][x_coord].location().second << ")";
                     x_coord++;
                 } else {
-                    outfile << "|";
+                    outfile << " | ";
                 }
             }
         }
@@ -202,8 +203,16 @@ void Board::printCoords(ofstream &outfile)
         outfile << "\n";
     }
     
-    outfile << " |A |B |C |D |E |F |G |H |\n";
-    outfile << "       --WHITE--         \n";
+    outfile << "  |  ";
+    char letter = 'A';
+    for (int i = 2; i < 18; ++i){
+        if (i % 2 == 0){
+            outfile << letter++;
+        } else {
+            outfile << setw(7);
+        }
+    }
+    outfile << "\n" << setw(31) << "--WHITE--";
 
 }
 
