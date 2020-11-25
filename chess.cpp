@@ -60,6 +60,33 @@ void Piece::settype(char t)
     type = t;
 }
 
+vector<pair<char,int>> Piece::moves(Board field)
+{
+    vector<pair<char,int>> possible_moves;
+
+    // List all moves, then check for valid moves
+     if (name == "Pawn"){
+        possible_moves.push_back(make_pair(loc.first,loc.second + 1));
+        // TODO: Add moves which are dependent on if enemy pieces are in vacinity 
+        if (movecount == 0)
+            possible_moves.push_back(make_pair(loc.first,loc.second + 2));
+     } else if (name == "King"){
+        possible_moves = 
+            {make_pair(loc.first - 1,loc.second),
+            make_pair(loc.first - 1,loc.second+1),
+            make_pair(loc.first - 1,loc.second-1),
+            make_pair(loc.first,loc.second+1),
+            make_pair(loc.first,loc.second-1),
+            make_pair(loc.first + 1,loc.second),
+            make_pair(loc.first + 1,loc.second + 1),
+            make_pair(loc.first + 1,loc.second - 1)};
+        
+
+
+
+    }
+} 
+
 // Add's pieces to the 8x8 board
 void Board::build()
 {
@@ -257,16 +284,19 @@ void Board::print()
     outfile.close();
 }
 
+
 Player::Player(char s)
 {
     side = s;
 }
 
+// Inserts chess pieces into player's pieces_list
 void Player::add_piece(Piece p)
 {
     pieces.push_back(p);
 }
 
+// Returns a vector of the player's pieces
 vector<Piece> Player::pieces_list()
 {
     return pieces;

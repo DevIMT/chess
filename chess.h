@@ -4,15 +4,14 @@
 
 using namespace std;
 
-// TODO: Create a Piece class. Fill Board with Pieces (Null, White, Black)
 class Piece {
     public:
         Piece() = default;
         Piece(pair<char,int> coord);
         Piece(string name, char type,pair<char,int> coord);
-        vector<string> moves(); // TODO
-        void setname(string name); // TODO
-        void settype(char type); // TODO
+        vector<pair<char,int>> moves(Board field); // TODO
+        void setname(string name);
+        void settype(char type);
         void setsymbol(string symb);
         string get_name();
         char get_type();
@@ -22,6 +21,7 @@ class Piece {
         string name = "Null";
         string symbol = " \u26C9 ";
         char type = 'N';
+        int movecount = 0;
         pair<char,int> loc = make_pair('A',1);
 };
 
