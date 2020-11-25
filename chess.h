@@ -6,27 +6,40 @@ class Piece {
     public:
         Piece() = default;
         Piece(std::string coord);
-        Piece(char name, char type,std::string coord);
-        void move(); // TODO
-        void setname(char name); // TODO
+        Piece(std::string name, char type,std::string coord);
+        std::vector<std::string> moves(); // TODO
+        void setname(std::string name); // TODO
         void settype(char type); // TODO
         void setsymbol(std::string symb);
-        char get_name();
+        std::string get_name();
         char get_type();
         std::string get_symbol();
         std::string location();
     private:
-        char name = ' ';
+        std::string name = "Null";
         std::string symbol = " \u26C9 ";
         char type = 'N';
         std::string loc;
+};
+
+class Player {
+    public:
+        Player() = default;
+        Player(char s);
+        void add_piece(Piece p);
+        void move_piece(Piece p);
+        std::vector<Piece> pieces_list();
+    private:
+        char side = 'W';
+        std::vector<Piece> pieces;
+
 };
 
 class Board {
     public:
         Board() = default;
         void build();
-        void set(); 
+        void set(Player &White, Player &Black); 
         void printCoords();
         void print();
     private:
@@ -40,16 +53,4 @@ class Board {
          {"A3","B3","C3","D3","E3","F3","G3","H3"},
          {"A2","B2","C2","D2","E2","F2","G2","H2"},
          {"A1","B1","C1","D1","E1","F1","G1","H1"}};
-};
-
-class Player {
-    public:
-        Player();
-        Player(char side);
-        void setpieces();
-        void movePiece();
-    private:
-        char side = 'W';
-        Piece pieces[16];
-
 };

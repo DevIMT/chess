@@ -9,7 +9,7 @@ Piece::Piece(std::string coord)
     loc = coord;
 }
 
-Piece::Piece(char n, char t, std::string coord)
+Piece::Piece(std::string n, char t, std::string coord)
 {
     name = n;
     type = t;
@@ -23,7 +23,7 @@ std::string Piece::location()
 }
 
 // Return name of the piece
-char Piece::get_name()
+std::string Piece::get_name()
 {
     return name;
 }
@@ -47,7 +47,7 @@ std::string Piece::get_symbol()
 }
 
 // Changes the piece's name to n
-void Piece::setname(char n)
+void Piece::setname(std::string n)
 {
     name = n;
 }
@@ -73,7 +73,7 @@ void Board::build()
 }
 
 // Sets the values of the pieces on the board
-void Board::set()
+void Board::set(Player &White, Player &Black)
 {
     for (int y = 0; y < 8; ++y){
         for (int x = 0; x < 8; ++x){
@@ -83,25 +83,26 @@ void Board::set()
                 if (y == 0){
                     if (x == 0 || x == 7){
                         board[y][x].setsymbol(" \u2656 ");
-                        board[y][x].setname('R');
+                        board[y][x].setname("Rook");
                     }
                     else if (x == 1 || x == 6){
                         board[y][x].setsymbol(" \u2658 ");
-                        board[y][x].setname('k');
+                        board[y][x].setname("Knight");
                     } else if (x == 2 || x == 5){
                         board[y][x].setsymbol(" \u2657 ");
-                        board[y][x].setname('B');
+                        board[y][x].setname("Bishop");
                     } else if (x == 3){
                         board[y][x].setsymbol(" \u2654 ");
-                        board[y][x].setname('K');
+                        board[y][x].setname("King");
                     } else {
                         board[y][x].setsymbol(" \u2655 ");
-                        board[y][x].setname('Q');
+                        board[y][x].setname("Queen");
                     }
                 } else {
                     board[y][x].setsymbol(" \u2659 ");
-                    board[y][x].setname('P');
+                    board[y][x].setname("Pawn");
                 }
+                Black.add_piece(board[y][x]);
             } 
             // White Pieces
             else if (y >= 6) {
@@ -109,28 +110,29 @@ void Board::set()
                 if (y == 7){
                     if (x == 0 || x == 7){
                         board[y][x].setsymbol(u8" \u265C ");
-                        board[y][x].setname('R');
+                        board[y][x].setname("Rook");
                     }
                     else if (x == 1 || x == 6){
                         board[y][x].setsymbol(u8" \u265E ");
-                        board[y][x].setname('k');
+                        board[y][x].setname("Knight");
                     } else if (x == 2 || x == 5){
                         board[y][x].setsymbol(u8" \u265D ");
-                        board[y][x].setname('B'); 
+                        board[y][x].setname("Bishop"); 
                     } else if (x == 3){
                         board[y][x].setsymbol(u8" \u265A ");
-                        board[y][x].setname('K');
+                        board[y][x].setname("King");
                     } else {
                         board[y][x].setsymbol(u8" \u265B ");
-                        board[y][x].setname('Q');
+                        board[y][x].setname("Queen");
                     }
                 } else {
                     board[y][x].setsymbol(u8" \u265F ");
-                    board[y][x].setname('P');
+                    board[y][x].setname("Pawn");
                 }
+                White.add_piece(board[y][x]);
             } else {
                 board[y][x].settype('N');
-                board[y][x].setname(' ');
+                board[y][x].setname("Null");
                 board[y][x].setsymbol(" \u26C9 ");
 
             }            
@@ -209,3 +211,21 @@ void Board::print()
 
     outfile.close();
 }
+
+Player::Player(char s)
+{
+    side = s;
+}
+
+void Player::add_piece(Piece p)
+{
+    pieces.push_back(p);
+}
+
+std::vector<Piece> Player::pieces_list()
+{
+    return pieces;
+}
+
+
+
