@@ -13,17 +13,19 @@ class Piece {
         void setname(string name);
         void settype(char type);
         void setsymbol(string symb);
+        void setloc(pair<int,int> pos);
         string get_name();
         char get_type();
         string get_symbol();
-        pair<char,int> location();
+        pair<int,int> get_location();
         pair<int,int> get_yx();
+        void move();
     private:
         string name = "Null";
         string symbol = " \u26C9 ";
         char type = 'N';
         int movecount = 0;
-        pair<char,int> loc = make_pair('A',1);
+        pair<int,int> loc;
 };
 
 class Player {

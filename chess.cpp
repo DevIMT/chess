@@ -19,7 +19,7 @@ Piece::Piece(string n, char t, pair<char,int> coord)
 }
 
 // Return a std::pair coordinates of piece (e.g. ('A',4))
-pair<char,int> Piece::location()
+pair<int,int> Piece::get_location()
 {
     return loc;
 }
@@ -48,10 +48,6 @@ string Piece::get_symbol()
     return symbol;
 }
 
-pair<int,int> Piece::get_yx()
-{
-    return find_yx(loc);
-}
 // Changes the piece's name to n
 void Piece::setname(string n)
 {
@@ -64,6 +60,18 @@ void Piece::settype(char t)
     type = t;
 }
 
+// Changes the piece's y,x coordinates
+void Piece::setloc(pair<int,int> pos)
+{
+    loc = pos;
+}
+
+// Increments the piece's movecount (affects moves list for Pawns)
+void Piece::move()
+{
+    movecount++;
+}
+
 // Add's pieces to the 8x8 board
 void Board::build()
 {
@@ -72,7 +80,7 @@ void Board::build()
     // Build the board
     for (int y = 0; y < 8; ++y){
         for (int x = 0; x < 8; ++x){
-            board[y][x] = Piece(coordinates[y][x]);       
+            board[y][x] = Piece(make_pair(y,x));       
         }
     }
 
@@ -160,8 +168,8 @@ void Board::printCoords()
                 outfile << 8-(y);
             else {
                 if (x % 2 == 0){
-                    outfile << "(" << board[y_coord][x_coord].location().first << ", "
-                            << board[y_coord][x_coord].location().second << ")";
+                    outfile << "(" << coordinates[y_coord][x_coord].first << ", "
+                            << coordinates[y_coord][x_coord].second << ")";
                     x_coord++;
                 } else {
                     outfile << "|";
@@ -259,7 +267,7 @@ void Board::print()
     }
     outfile << "\n" << setw(31) << "--WHITE--";
 
-    printCoords(outfile); 
+    // printCoords(outfile); 
     outfile.close();
 }
 
@@ -299,9 +307,8 @@ pair<int,int> find_yx(pair<char,int> coord)
 // Chess Piece Moves
 vector<pair<int,int>> Piece::moves()
 {
-    pair<int,int> coord = find_yx(loc);
-    int x = coord.second;
-    int y = coord.first;
+    int x = loc.second;
+    int y = loc.first;
     if (type == 'W'){
         if (name == "Pawn"){
             if (movecount == 0)
@@ -343,13 +350,13 @@ string Player::get_name()
     return name;
 }
 
-// Inserts chess pieces into player's pieces_list
+// TODO: Inserts chess pieces into player's pieces_list
 void Player::capture_piece(Piece p)
 {
     captured_pieces.push_back(p);
 }
 
-// Returns a vector of the player's pieces
+// TODO: Returns a vector of the player's pieces
 vector<Piece> Player::list_pieces()
 {
     return captured_pieces;
@@ -442,10 +449,10 @@ int Board::validate_move(Piece &p1, Piece &p2)
     vector<pair<int,int>> p1_moves = p1.moves();
 
     bool found = false;
-    // std::cout << "P1 moves: ";
+    std::cout << "Piece moves: ";
     for (auto e :p1_moves){
-        // std::cout << "(" << e.first << "," << e.second << "), ";
-        if (e == p2.get_yx()){
+        std::cout << "(" << e.first << "," << e.second << "), ";
+        if (e == p2.get_location()){
             found = true;
         }
     }
@@ -465,15 +472,24 @@ int Board::validate_move(Piece &p1, Piece &p2)
 }
 
 int Board::move(pair<int,int> p1_yx, pair<int,int> p2_yx)
-{
+{    
+    
     // Checks to see if p2_yx is in p1's move list
     int task = validate_move(board[p1_yx.first][p1_yx.second],board[p2_yx.first][p2_yx.second]);
 
     if (task == 1){ // p2 is enemy piece (Take and replace with N)
+        board[p1_yx.first][p1_yx.second].setloc(p2_yx);
+        board[p1_yx.first][p1_yx.second].move();
+
         board[p2_yx.first][p2_yx.second] = board[p1_yx.first][p1_yx.second];
         board[p1_yx.first][p1_yx.second] = null_piece(p1_yx);
         return 0;
     } else if (task == 0){ // p2 is an empty space (swap pieces)
+        // Updates the Pieces' y,x coords are they are swapped
+        board[p1_yx.first][p1_yx.second].setloc(p2_yx);
+        board[p1_yx.first][p1_yx.second].move();
+
+        board[p2_yx.first][p2_yx.second].setloc(p1_yx);
         swap(board[p1_yx.first][p1_yx.second],board[p2_yx.first][p2_yx.second]);
         return 0;
     } else {
