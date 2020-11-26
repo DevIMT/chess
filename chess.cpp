@@ -98,7 +98,7 @@ void Board::build()
 }
 
 // Sets the values of the pieces on the board
-void Board::set(Player &White, Player &Black)
+void Board::set()
 {
     for (int y = 0; y < 8; ++y){
         for (int x = 0; x < 8; ++x){
@@ -278,7 +278,7 @@ void Board::print()
     outfile.close();
 }
 
-pair<int,int> Board::find_yx(pair<char,int> coord)
+pair<int,int> find_yx(pair<char,int> coord)
 {
     // Convert coord into x,y coordinates to find on 2d vector 'board'
     int x;
@@ -306,9 +306,53 @@ pair<int,int> Board::find_yx(pair<char,int> coord)
     return make_pair(y,x);
 }
 
+vector<pair<int,int>> Piece::moves()
+{
+    pair<int,int> coord = find_yx(loc);
+    int x = coord.second;
+    int y = coord.first;
+    if (type == 'W'){
+        if (name == "Pawn"){
+            if (movecount = 0)
+                return vector<pair<int,int>>{make_pair(y+1,x), make_pair(y+2,x)};
+            else 
+                return vector<pair<int,int>>{make_pair(y+1,x)};
+        }
+    } else if (type == 'B'){
+        if (name == "Pawn"){
+            if (movecount = 0)
+                return vector<pair<int,int>>{make_pair(y-1,x), make_pair(y-2,x)};
+            else 
+                return vector<pair<int,int>>{make_pair(y-1,x)};
+        }
+    }
+}
+
+Piece Board::move(Piece p1, Piece p2)
+{
+    // Check p1's moves
+
+    // Check if find_yx(p2.loc) is in the moves list
+
+    // If p2 is type 'N', swap pieces on board
+
+    // If p2 is type != p1.get_type, then replace p1 at p2, set p1's past yx to Null piece and return p2 to add to player's piece list
+}
+
 Player::Player(char s)
 {
+    s = toupper(s);
     side = s;
+    if (s == 'W'){
+        name = "White";
+    } else {
+        name = "Black";
+    }
+}
+
+string Player::get_name()
+{
+    return name;
 }
 
 // Inserts chess pieces into player's pieces_list
@@ -323,5 +367,40 @@ vector<Piece> Player::list_pieces()
     return captured_pieces;
 }
 
+void Game::start()
+{
+    Board grid;
+
+    grid.build();
+    grid.set();
+    // grid.printCoords();
+
+    grid.print();
+}
+
+string Game::turn(Player P)
+{
+    bool valid = false;
+    string selected_piece;
+
+    std::cout << P.get_name() << " to move \n";
+    while (!valid){
+        std::cout << "Select a piece (e.g. E2): ";
+        std::cin >> selected_piece;
+
+        for (auto &e: selected_piece){
+            e = std::toupper(e);
+        }
 
 
+        if (selected_piece[0] >= 'A' && selected_piece[0] <= 'H' && 
+            selected_piece[1] >= '1' && selected_piece[1] <= '8'){
+                std::cout << "Selecting piece at " << selected_piece << ".\n";
+                valid = true;
+        } else {
+            std::cerr << "Invalid coordinate.\n\n";
+        }
+    }
+    
+    return selected_piece;
+}

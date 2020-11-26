@@ -9,7 +9,7 @@ class Piece {
         Piece() = default;
         Piece(pair<char,int> coord);
         Piece(string name, char type,pair<char,int> coord);
-        // vector<pair<char,int>> moves(pair<char,int>); // TODO
+        vector<pair<int,int>> moves(); // TODO
         void setname(string name);
         void settype(char type);
         void setsymbol(string symb);
@@ -29,9 +29,11 @@ class Player {
     public:
         Player() = default;
         Player(char s);
+        string get_name();
         void capture_piece(Piece p);
         vector<Piece> list_pieces();
     private:
+        string name = "White";
         char side = 'W';
         vector<Piece> captured_pieces;
 
@@ -41,9 +43,8 @@ class Board {
     public:
         Board() = default;
         void build();
-        void set(Player &White, Player &Black); 
-        void move(pair<char,int> coord);
-        pair<int,int> find_yx(pair<char,int> coord);
+        void set(); 
+        Piece move(Piece p1, Piece p2);
         void printCoords();
         void printCoords(ofstream &outfile);
         void print();
@@ -59,3 +60,14 @@ class Board {
          {make_pair('A',2),make_pair('B',2),make_pair('C',2),make_pair('D',2),make_pair('E',2),make_pair('F',2),make_pair('G',2),make_pair('H',2)},
          {make_pair('A',1),make_pair('B',1),make_pair('C',1),make_pair('D',1),make_pair('E',1),make_pair('F',1),make_pair('G',1),make_pair('H',1)}};
 };
+
+class Game {
+    public:
+        Game();
+        void start();
+        string turn(Player P); // TODO
+        void move(Player P);
+    private:
+};
+
+pair<int,int> find_yx(pair<char,int> coord);

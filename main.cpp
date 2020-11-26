@@ -3,38 +3,21 @@
 
 int main()
 {
-    Board grid;
+    Game chess;
     Player White('W');
     Player Black('B');
-
-    grid.build();
-    grid.set(White,Black);
-    // grid.printCoords();
-
-    grid.print();
-    bool valid = false;
-    string selected_piece;
-
-    std::cout << "White to move \n";
-    while (!valid){
-        std::cout << "Select a piece (e.g. E2): ";
-        std::cin >> selected_piece;
-
-        for (auto &e: selected_piece){
-            e = std::toupper(e);
-        }
-
-
-        if (selected_piece[0] >= 'A' && selected_piece[0] <= 'H' && 
-            selected_piece[1] >= '1' && selected_piece[1] <= '8'){
-                std::cout << "Selecting piece at " << selected_piece << ".\n";
-                valid = true;
+    chess.start();
+    int move = 1;
+    while (true){
+        if (move % 2 == 0){
+            chess.turn(Black);
         } else {
-            std::cerr << "Invalid coordinate.\n\n";
+            chess.turn(White);
         }
     }
 
-    pair<char,int> coord = make_pair(selected_piece[0],int(selected_piece[1]-48));
+
+    pair<char,int> coord = make_pair(piece[0],int(piece[1]-48));
     std::cout << coord.first << " " << coord.second << "\n";
     
 
