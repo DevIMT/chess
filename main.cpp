@@ -3,22 +3,31 @@
 
 int main()
 {
-    Game chess;
+    Board board;
+    Game chess(board);
     Player White('W');
     Player Black('B');
     chess.start();
     int move = 1;
+    string move_input;
+    int move_status;
     while (true){
         if (move % 2 == 0){
-            chess.turn(Black);
+            move_input = chess.turn(Black);
+            move_status = chess.move(Black,move_input);
+            
         } else {
-            chess.turn(White);
+            move_input = chess.turn(White);
+            move_status = chess.move(White,move_input);
+
+        }   
+
+        if (move_status == 0){
+            move++;
         }
+
+        std::cout << "\n\n";
     }
-
-
-    pair<char,int> coord = make_pair(piece[0],int(piece[1]-48));
-    std::cout << coord.first << " " << coord.second << "\n";
     
 
     // Program the pieces

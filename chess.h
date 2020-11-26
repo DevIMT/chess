@@ -17,6 +17,7 @@ class Piece {
         char get_type();
         string get_symbol();
         pair<char,int> location();
+        pair<int,int> get_yx();
     private:
         string name = "Null";
         string symbol = " \u26C9 ";
@@ -30,8 +31,8 @@ class Player {
         Player() = default;
         Player(char s);
         string get_name();
-        void capture_piece(Piece p);
-        vector<Piece> list_pieces();
+        void capture_piece(Piece p); // TODO
+        vector<Piece> list_pieces(); // TODO
     private:
         string name = "White";
         char side = 'W';
@@ -44,10 +45,13 @@ class Board {
         Board() = default;
         void build();
         void set(); 
-        Piece move(Piece p1, Piece p2);
+        int move(pair<int,int> p1, pair<int,int> p2); // TODO
+        int validate_move(Piece &p1, Piece &p2);
+        Piece null_piece(pair<int,int> pos);
         void printCoords();
         void printCoords(ofstream &outfile);
         void print();
+        Piece find_piece(pair<int,int> yx);
     private:
         vector<vector<Piece>> board;
         vector<vector<pair<char,int>>> coordinates{
@@ -63,11 +67,14 @@ class Board {
 
 class Game {
     public:
-        Game();
+        Game() = default;
+        Game(Board b);
         void start();
-        string turn(Player P); // TODO
-        void move(Player P);
+        string turn(Player P);
+        string move_prompt(Player P, string start_pos);
+        int move(Player P, string selected_piece); // TODO
     private:
+        Board board;
 };
 
 pair<int,int> find_yx(pair<char,int> coord);
