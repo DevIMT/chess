@@ -72,6 +72,18 @@ void Piece::move()
     movecount++;
 }
 
+// Returns the opposite type of the piece's type (White/Black)
+char Piece::opp()
+{
+    if (type == 'W'){
+        return 'B';
+    } else if (type == 'B'){
+        return 'W';
+    }
+
+    return 'N';
+}
+
 // Add's pieces to the 8x8 board
 void Board::build()
 {
@@ -267,7 +279,7 @@ void Board::print()
     }
     outfile << "\n" << setw(31) << "--WHITE--";
 
-    // printCoords(outfile); 
+    printCoords(outfile); 
     outfile.close();
 }
 
@@ -305,27 +317,48 @@ pair<int,int> find_yx(pair<char,int> coord)
 }
 
 // Chess Piece Moves
-vector<pair<int,int>> Piece::moves()
+vector<vector<pair<int,int>>> Piece::moves()
 {
     int x = loc.second;
     int y = loc.first;
+    int dir = 0; // Number of total directions piece can move
     if (type == 'W'){
         if (name == "Pawn"){
-            if (movecount == 0)
-                return vector<pair<int,int>>{make_pair(y-1,x), make_pair(y-2,x)};
-            else 
-                return vector<pair<int,int>>{make_pair(y-1,x)};
+            dir = 3;
+            vector<vector<pair<int,int>>> p_moves(dir, vector<pair<int,int>>(0));
+            if (movecount == 0){
+                p_moves[0].push_back(make_pair(y-1,x));
+                p_moves[0].push_back(make_pair(y-2,x));
+                p_moves[1].push_back(make_pair(y-1,x-1)); // left diag
+                p_moves[2].push_back(make_pair(y-1,x+1)); // right diag
+                return p_moves;
+            } else {
+                p_moves[0].push_back(make_pair(y-1,x));
+                p_moves[1].push_back(make_pair(y-1,x-1));
+                p_moves[2].push_back(make_pair(y-1,x+1));
+                return p_moves;
+            }
         }
     } else if (type == 'B'){
         if (name == "Pawn"){
-            if (movecount == 0)
-                return vector<pair<int,int>>{make_pair(y+1,x), make_pair(y+2,x)};
-            else 
-                return vector<pair<int,int>>{make_pair(y+1,x)};
+            dir = 3;
+            vector<vector<pair<int,int>>> p_moves(dir, vector<pair<int,int>>(0));
+            if (movecount == 0){
+                p_moves[0].push_back(make_pair(y+1,x));
+                p_moves[0].push_back(make_pair(y+2,x));
+                p_moves[1].push_back(make_pair(y+1,x-1)); // left diag
+                p_moves[2].push_back(make_pair(y+1,x+1)); // right diag
+                return p_moves;
+            } else {
+                p_moves[0].push_back(make_pair(y+1,x));
+                p_moves[1].push_back(make_pair(y+1,x-1));
+                p_moves[2].push_back(make_pair(y+1,x+1));
+                return p_moves;
+            }
         }
     }
 
-    return vector<pair<int,int>>{make_pair(y,x)};
+    return vector<vector<pair<int,int>>>(0);
 }
 
 // Places a null piece at the passed yx board coordinates
@@ -427,7 +460,6 @@ string Game::move_prompt(Player P, string start_pos)
     return end_pos;
 }
 
-// TODO: Finish Board::move function
 int Game::move(Player P, string start_pos)
 {
     pair<char,int> coord = make_pair(start_pos[0],int(start_pos[1]-48));
@@ -444,31 +476,61 @@ int Game::move(Player P, string start_pos)
     return status;
 }
 
+// TODO: Remove moves from p1_moves if they aren't valid
 int Board::validate_move(Piece &p1, Piece &p2)
 {
-    vector<pair<int,int>> p1_moves = p1.moves();
+    vector<vector<pair<int,int>>> p1_moves = p1.moves();
 
     bool found = false;
-    std::cout << "Piece moves: ";
-    for (auto e :p1_moves){
-        std::cout << "(" << e.first << "," << e.second << "), ";
-        if (e == p2.get_location()){
-            found = true;
+    int i = 0;
+    int j;
+    // Filter moves from list
+    for (auto dir : p1_moves){
+        j = 0;
+        for (auto move: dir){
+            // If possible move doesn't land on a null piece, removes all further moves
+            if (find_piece(move).get_type() != 'N'){
+                p1_moves[i].erase(p1_moves[i].begin()+(j+1),p1_moves[i].end());
+            } 
+            // If possible move lands on same piece type
+            if (find_piece(move).get_type() == p1.get_type()){
+                p1_moves[i].erase(p1_moves[i].begin()+j,p1_moves[i].end());
+            }
+            if (p1.get_name() == "Pawn"){
+                if (p1.get_location().second != move.second && p2.get_type() != p1.opp()){
+                    p1_moves[i].pop_back();
+                } else if (p1.get_location().second == move.second && find_piece(move).get_type() != 'N'){
+                    p1_moves[i].pop_back();
+                }
+            }
+            j++;            
+        }
+        i++;
+    }
+
+    
+    // std::cout << "Piece moves: ";
+    for (auto e:p1_moves){
+        for (auto f:e){
+            // std::cout << "(" << f.first << "," << f.second << "), ";
+            if (f == p2.get_location()){
+                found = true;
+            }
         }
     }
 
     if (found != true){
-        std::cerr << "Error finding piece.\n";
+        std::cerr << "Invalid Move.\n";
         return 2;
-    } else {
-        if (p2.get_type() == 'N'){
-            return 0;
-        } else if (p2.get_type() == p1.get_type()){
-            std::cerr << "Same piece.\n";
-            return 2;
-        } else
-            return 1;
-    }
+    } 
+    if (p2.get_type() == 'N'){
+        return 0;
+    } else if (p2.get_type() == p1.get_type()){
+        std::cerr << "Same piece.\n";
+        return 2;
+    } else
+        return 1;
+    
 }
 
 int Board::move(pair<int,int> p1_yx, pair<int,int> p2_yx)

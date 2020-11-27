@@ -9,7 +9,7 @@ class Piece {
         Piece() = default;
         Piece(pair<char,int> coord);
         Piece(string name, char type,pair<char,int> coord);
-        vector<pair<int,int>> moves(); // TODO
+        vector<vector<pair<int,int>>> moves(); // TODO
         void setname(string name);
         void settype(char type);
         void setsymbol(string symb);
@@ -18,7 +18,7 @@ class Piece {
         char get_type();
         string get_symbol();
         pair<int,int> get_location();
-        pair<int,int> get_yx();
+        char opp();
         void move();
     private:
         string name = "Null";
