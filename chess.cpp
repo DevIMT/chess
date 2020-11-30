@@ -374,14 +374,14 @@ vector<vector<pair<int,int>>> Piece::moves()
     } else if (name == "Knight"){
         dir = 8;
         vector<vector<pair<int,int>>> p_moves(dir, vector<pair<int,int>>(0));
-        p_moves[0].push_back(make_pair(y-2,x+1));
-        p_moves[1].push_back(make_pair(y-2,x-1));
-        p_moves[2].push_back(make_pair(y+2,x+1));
-        p_moves[3].push_back(make_pair(y+2,x-1));
-        p_moves[4].push_back(make_pair(y+1,x+2));
-        p_moves[5].push_back(make_pair(y-1,x+2));
-        p_moves[6].push_back(make_pair(y+1,x-2));
-        p_moves[7].push_back(make_pair(y-1,x-2));
+        if (y-2 >= 0 && x+1 <= 7) p_moves[0].push_back(make_pair(y-2,x+1));
+        if (y-2 >= 0 && x-1 >= 0) p_moves[1].push_back(make_pair(y-2,x-1));
+        if (y+2 <= 7 && x+1 <= 7) p_moves[2].push_back(make_pair(y+2,x+1));
+        if (y+2 <= 7 && x-1 >= 0) p_moves[3].push_back(make_pair(y+2,x-1));
+        if (y+1 <= 7 && x+2 <= 7) p_moves[4].push_back(make_pair(y+1,x+2));
+        if (y-1 >= 0 && x+2 <= 7) p_moves[5].push_back(make_pair(y-1,x+2));
+        if (y+1 <= 7 && x-2 >= 0) p_moves[6].push_back(make_pair(y+1,x-2));
+        if (y-1 >= 0 && x-2 >= 0) p_moves[7].push_back(make_pair(y-1,x-2));
         return p_moves;
     } else if (name == "Rook"){
         dir = 4;
@@ -540,6 +540,10 @@ int Board::validate_move(Piece &p1, Piece &p2)
             if (find_piece(move).get_type() != 'N'){
                 p1_moves[i].erase(p1_moves[i].begin()+(j+1),p1_moves[i].end());
             } 
+
+            if (find_piece(move).get_type() == p1.get_type()){
+                p1_moves[i].erase(p1_moves[i].begin()+j);
+            }
 
             if (p1.get_name() == "Pawn"){
                 if (p1.get_location().second != move.second && p2.get_type() != p1.opp()){
