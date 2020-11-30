@@ -316,16 +316,19 @@ pair<int,int> find_yx(pair<char,int> coord)
     return make_pair(y,x);
 }
 
+// TODO: Fix the Black Bishops, Rooks, and Knights (Segmentation Fault)
 // Chess Piece Moves
 vector<vector<pair<int,int>>> Piece::moves()
 {
     int x = loc.second;
     int y = loc.first;
     int dir = 0; // Number of total directions piece can move
-    if (type == 'W'){
-        if (name == "Pawn"){
-            dir = 3;
-            vector<vector<pair<int,int>>> p_moves(dir, vector<pair<int,int>>(0));
+    int max = x > y ? x : y;
+    int min = x < y ? x : y;
+    if (name == "Pawn"){
+        dir = 3;
+        vector<vector<pair<int,int>>> p_moves(dir, vector<pair<int,int>>(0));
+        if (type == 'W'){
             if (movecount == 0){
                 p_moves[0].push_back(make_pair(y-1,x));
                 p_moves[0].push_back(make_pair(y-2,x));
@@ -338,11 +341,7 @@ vector<vector<pair<int,int>>> Piece::moves()
                 p_moves[2].push_back(make_pair(y-1,x+1));
                 return p_moves;
             }
-        }
-    } else if (type == 'B'){
-        if (name == "Pawn"){
-            dir = 3;
-            vector<vector<pair<int,int>>> p_moves(dir, vector<pair<int,int>>(0));
+        } else if (type == 'B'){
             if (movecount == 0){
                 p_moves[0].push_back(make_pair(y+1,x));
                 p_moves[0].push_back(make_pair(y+2,x));
@@ -356,6 +355,46 @@ vector<vector<pair<int,int>>> Piece::moves()
                 return p_moves;
             }
         }
+    } else if (name == "Bishop"){
+        dir = 4;
+        vector<vector<pair<int,int>>> p_moves(dir, vector<pair<int,int>>(0));  
+        int i = 1;
+        while (x+i <= 7 && y+i <= 7){ p_moves[0].push_back(make_pair(y+i,x+i)); i++;}
+        std::cout << "Passed 1\n";
+        i = 1;
+        while (x+i <= 7 && y-i >= 0){ p_moves[1].push_back(make_pair(y-i,x+i)); i++;}
+        i = 1;
+        std::cout << "Passed 2\n";
+        while (x-i >= 0 && y-i >= 0){ p_moves[2].push_back(make_pair(y-i,x-i)); i++;}
+        i = 1;
+        std::cout << "Passed 3\n";
+        while (x-i >= 0 && y+i <= 7){ p_moves[3].push_back(make_pair(y+i,x-i)); i++;}
+        std::cout << "Passed 4\n";
+        return p_moves;
+    } else if (name == "Knight"){
+        dir = 8;
+        vector<vector<pair<int,int>>> p_moves(dir, vector<pair<int,int>>(0));
+        p_moves[0].push_back(make_pair(y-2,x+1));
+        p_moves[1].push_back(make_pair(y-2,x-1));
+        p_moves[2].push_back(make_pair(y+2,x+1));
+        p_moves[3].push_back(make_pair(y+2,x-1));
+        p_moves[4].push_back(make_pair(y+1,x+2));
+        p_moves[5].push_back(make_pair(y-1,x+2));
+        p_moves[6].push_back(make_pair(y+1,x-2));
+        p_moves[7].push_back(make_pair(y-1,x-2));
+        return p_moves;
+    } else if (name == "Rook"){
+        dir = 4;
+        vector<vector<pair<int,int>>> p_moves(dir, vector<pair<int,int>>(0));
+        for (int i = 1; i < y+1 ;++i)
+            p_moves[0].push_back(make_pair(y-i,x));
+        for (int i = 1; i < 8-y ;++i)
+            p_moves[1].push_back(make_pair(y+i,i));
+        for (int i = 1; i < x+1 ;++i)
+            p_moves[2].push_back(make_pair(y,x-i));
+        for (int i = 1; i < 8-x ;++i)
+            p_moves[3].push_back(make_pair(y,x+i));
+        return p_moves;
     }
 
     return vector<vector<pair<int,int>>>(0);
@@ -484,6 +523,15 @@ int Board::validate_move(Piece &p1, Piece &p2)
     bool found = false;
     int i = 0;
     int j;
+    // std::cout << p1.get_name() << " " << p1.get_location().first << "," << p1.get_location().second << ": \n";
+    // for (auto dir:p1_moves){
+    //     for (auto move: dir){
+    //         std::cout << "(" << move.first << "," << move.second << ")";
+    //     }
+    // }
+    // std::cout << "\n";
+
+
     // Filter moves from list
     for (auto dir : p1_moves){
         j = 0;
@@ -492,10 +540,7 @@ int Board::validate_move(Piece &p1, Piece &p2)
             if (find_piece(move).get_type() != 'N'){
                 p1_moves[i].erase(p1_moves[i].begin()+(j+1),p1_moves[i].end());
             } 
-            // If possible move lands on same piece type
-            if (find_piece(move).get_type() == p1.get_type()){
-                p1_moves[i].erase(p1_moves[i].begin()+j,p1_moves[i].end());
-            }
+
             if (p1.get_name() == "Pawn"){
                 if (p1.get_location().second != move.second && p2.get_type() != p1.opp()){
                     p1_moves[i].pop_back();
@@ -509,10 +554,10 @@ int Board::validate_move(Piece &p1, Piece &p2)
     }
 
     
-    // std::cout << "Piece moves: ";
+    std::cout << "Piece moves: ";
     for (auto e:p1_moves){
         for (auto f:e){
-            // std::cout << "(" << f.first << "," << f.second << "), ";
+            std::cout << "(" << f.first << "," << f.second << "), ";
             if (f == p2.get_location()){
                 found = true;
             }
